@@ -33,6 +33,20 @@ struct PaletteRowIndex: Equatable {
         return nil
     }
 
+    /// ⌘↓ lands on the next section's first row; ⌘↑ on this one's, or the previous one's from it.
+    func sectionJump(_ delta: Int, from index: Int) -> Int {
+        guard count > 0 else { return 0 }
+        let selection = clamped(index)
+        var starts = hasCalculator ? [0] : []
+        var next = hasCalculator ? 1 : 0
+        for sectionCount in sectionCounts where sectionCount > 0 {
+            starts.append(next)
+            next += sectionCount
+        }
+        let target = delta > 0 ? starts.first { $0 > selection } : starts.last { $0 < selection }
+        return target ?? selection
+    }
+
     /// The inverse of `row(at:)` — where a screen puts the highlight after its own list moves.
     func index(section: Int, offset: Int) -> Int? {
         guard sectionCounts.indices.contains(section), offset >= 0,

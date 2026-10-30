@@ -38,7 +38,7 @@ struct ClipboardList: View {
         var currentTitle: String?
         var pinnedSlot = 0
         for item in results {
-            let title = item.isPinned ? String(localized: "Pinned") : DateBucket(for: item.createdAt).title
+            let title = item.sectionTitle
             if title != currentTitle {
                 rows.append(.header(title))
                 currentTitle = title
@@ -93,6 +93,13 @@ struct ClipboardList: View {
             .scrollFollowsSelection(
                 scroll, row: selectedID?.uuidString, atOrigin: firstRowSelected, proxy: proxy)
         }
+    }
+}
+
+extension ClipboardItem {
+    /// Pins share one section whatever their age; the rest sit under their date bucket.
+    var sectionTitle: String {
+        isPinned ? String(localized: "Pinned") : DateBucket(for: createdAt).title
     }
 }
 

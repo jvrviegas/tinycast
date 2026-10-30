@@ -550,6 +550,7 @@ struct RootPaletteView: View {
                     core.paletteCoordinator.expandFromCompact()
                     return .handled
                 }
+                if let jump = jumpSection(1, modifiers: press.modifiers) { return jump }
                 return moveVertically(1)
             }
             .onKeyPress(keys: [.upArrow], phases: [.down, .repeat]) { press in
@@ -561,6 +562,7 @@ struct RootPaletteView: View {
                     return .handled
                 }
                 if vm.isComposing { return .ignored }
+                if let jump = jumpSection(-1, modifiers: press.modifiers) { return jump }
                 return moveVertically(-1)
             }
             .onKeyPress(keys: [.leftArrow], phases: [.down, .repeat]) { press in
@@ -1405,6 +1407,21 @@ struct RootPaletteView: View {
             move(delta, in: screen)
             return .handled
         }
+        vm.selection = next
+        scroll = ScrollIntent(kind: .follow)
+        return .handled
+    }
+
+    /// Nil unless ⌘ alone is held on a screen with sections, so every other press moves as before.
+    private func jumpSection(_ delta: Int, modifiers: SwiftUI.EventModifiers) -> KeyPress.Result? {
+        guard modifiers.intersection([.command, .control, .option, .shift]) == .command else {
+            return nil
+        }
+        let screen = screen
+        guard !screen.ownsVerticalKeys(at: selection(in: screen)),
+            let next = screen.jumpSection(delta, from: selection(in: screen))
+        else { return nil }
+        if argumentFocused != nil { returnFocusToSearchField() }
         vm.selection = next
         scroll = ScrollIntent(kind: .follow)
         return .handled

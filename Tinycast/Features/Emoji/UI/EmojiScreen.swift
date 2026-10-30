@@ -124,6 +124,11 @@ struct EmojiScreen: PaletteScreen {
         }
     }
 
+    func jumpSection(_ delta: Int, from selection: Int) -> Int? {
+        PaletteRowIndex(sectionCounts: sections.map(\.entries.count))
+            .sectionJump(delta, from: selection)
+    }
+
     func body(selection: Int, scroll: ScrollIntent) -> AnyView {
         AnyView(content(selection: selection, scroll: scroll))
     }

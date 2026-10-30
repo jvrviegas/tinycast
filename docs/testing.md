@@ -137,7 +137,7 @@ If a change touches anything in the right column, the harness on the left is man
 | `CommandEscapeTapTests` | `Palette/CommandEscapeTap.swift` — dedicated run-loop dispatch while main is blocked, timeout recovery, stale actions, installation cancellation and teardown; private ports and unposted events only |
 | `PaletteNavigationTests` | `Palette/PaletteState.swift`'s screen motions — `prepare`, `replace`, `push`, `pop` — and hover arming, pointer drift, scroll disarming and highlight tokens |
 | `CompactBarTests` | Compact shortcut order, selection boundaries, zero-to-four slots, identifiers, isolated preferences and invalid settings-file rejection |
-| `PaletteSelectionTests` | `Features/PaletteRowIndex.swift` |
+| `PaletteSelectionTests` | `Features/PaletteRowIndex.swift` — the flat index, its inverse and the ⌘↑/⌘↓ section jump |
 | `InterfaceSizeTests` | `DesignSystem/InterfaceMetrics.swift`, `Features/Settings/InterfaceSize.swift`, `Extensions/Model/ExtensionFormMetrics.swift` |
 | `FormInputTests` | Native field/textarea sizing, editing alignment, placeholders, Tab, Unicode selection, undo and code fonts |
 | `PalettePlacementTests` | `DesignSystem/Theme.swift`, `Palette/PalettePlacement.swift` |
@@ -473,6 +473,8 @@ caches, TCC grants and login item, so this cannot disturb an installed copy.
   candidate is committed — check on a second summon too, where first responder never moved
 - Typing filters instantly; ↑/↓ move the highlight and scroll it into view without yanking the list
 - ⌃N/⌃P move the highlight as ↓/↑ do; ⌃F/⌃B step compact shortcuts or the emoji grid's selection, and the caret elsewhere
+- ⌘↓/⌘↑ jump between sections in the launcher, Clipboard History and the emoji picker, scrolling the row
+  into view; ⌥⌘↑/↓ still reorders a favorite or pin, and a screen without sections treats them as ↓/↑
 - The highlight always sits on the row the footer pill describes
 - With a calculation typed, the calculator card is first and is selected first
 - ⌘↵ on a number, unit or money card puts the answer in the search bar with the caret after it, so

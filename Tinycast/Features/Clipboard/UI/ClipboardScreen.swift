@@ -24,6 +24,20 @@ struct ClipboardScreen: PaletteScreen {
         return rows.indices.contains(selection) ? rows[selection] : nil
     }
 
+    func jumpSection(_ delta: Int, from selection: Int) -> Int? {
+        var counts: [Int] = []
+        var title: String?
+        for item in rows {
+            if item.sectionTitle == title {
+                counts[counts.count - 1] += 1
+            } else {
+                counts.append(1)
+                title = item.sectionTitle
+            }
+        }
+        return PaletteRowIndex(sectionCounts: counts).sectionJump(delta, from: selection)
+    }
+
     func actions(at selection: Int) -> PopoverMenuContent? {
         guard let item = item(at: selection) else { return nil }
         return ClipboardActionsMenu.content(

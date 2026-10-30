@@ -665,6 +665,21 @@ control characters, which the ASCII test would otherwise accept in place of the 
 layout has no letter position to recover for them anyway. No replacement event is synthesized, and
 unmodified typing stays on the active input source and follows the normal composition path.
 
+## Section jumps
+
+⌘↓ moves the selection to the first row of the next section and ⌘↑ to the first row of the current
+one, or of the previous one when it is already there. At the last section ⌘↓ stays put. ⌘ must be the
+only modifier: ⌥⌘↑/↓ still reorders a favorite or a pin.
+
+A screen opts in with `PaletteScreen.jumpSection(_:from:)` and answers through
+`PaletteRowIndex.sectionJump`, so the section boundaries live in one pure place. The launcher, Clipboard
+History and the emoji picker do. Every other screen returns nil, and ⌘↓ stays a plain ↓ there, as does
+any screen whose selected row `ownsVerticalKeys`. A lead card counts as a section of its own.
+
+A screen's section counts must agree with how its view groups rows, or a jump lands mid-section.
+`LauncherScreen` relies on the results past the matches arriving grouped by kind; `ClipboardItem.sectionTitle`
+is the one rule both the Clipboard list and its jump read.
+
 ## The keyboard belongs to the search field
 
 `PalettePanel.makeFirstResponder` declines any responder whose subtree is marked

@@ -414,6 +414,61 @@ struct PaletteSelectionTests {
             }
         }
 
+        // ⌘↓ / ⌘↑: sections of 2, 1 and 3 start at 0, 2 and 3.
+        let jump = PaletteRowIndex(sectionCounts: [2, 1, 3])
+        for (from, down) in [(0, 2), (1, 2), (2, 3), (3, 3), (4, 4), (5, 5)] {
+            expect(jump.sectionJump(1, from: from) == down, "⌘↓ from \(from) lands on \(down)")
+        }
+        for (from, up) in [(0, 0), (1, 0), (2, 0), (3, 2), (4, 3), (5, 3)] {
+            expect(jump.sectionJump(-1, from: from) == up, "⌘↑ from \(from) lands on \(up)")
+        }
+        expect(jump.sectionJump(1, from: 99) == 5, "⌘↓ from past the end clamps, then stays")
+        expect(jump.sectionJump(-1, from: -4) == 0, "⌘↑ from below zero clamps, then stays")
+
+        // Empty sections are skipped, so a jump never lands on a row that is not there.
+        let jumpGapped = PaletteRowIndex(sectionCounts: [2, 0, 0, 2, 0])
+        expect(jumpGapped.sectionJump(1, from: 0) == 2, "⌘↓ steps over empty sections")
+        expect(jumpGapped.sectionJump(-1, from: 3) == 2, "⌘↑ mid-section goes to its first row")
+        expect(jumpGapped.sectionJump(-1, from: 2) == 0, "⌘↑ from a first row skips empty sections")
+        expect(PaletteRowIndex(sectionCounts: [0, 0]).sectionJump(1, from: 0) == 0, "empty stays at 0")
+        expect(PaletteRowIndex(sectionCounts: [4]).sectionJump(1, from: 2) == 2, "one section: ⌘↓ stays")
+        expect(PaletteRowIndex(sectionCounts: [4]).sectionJump(-1, from: 2) == 0, "one section: ⌘↑ to 0")
+
+        // The lead card is a section of its own: ⌘↓ leaves it, ⌘↑ returns to it.
+        let jumpCard = PaletteRowIndex(hasCalculator: true, sectionCounts: [2, 3])
+        expect(jumpCard.sectionJump(1, from: 0) == 1, "⌘↓ from the card lands on the first result")
+        expect(jumpCard.sectionJump(-1, from: 1) == 0, "⌘↑ from the first result returns to the card")
+        expect(jumpCard.sectionJump(1, from: 2) == 3, "⌘↓ crosses a section with the card in front")
+        expect(jumpCard.sectionJump(-1, from: 4) == 3, "⌘↑ mid-section finds its first row past the card")
+        let lone = PaletteRowIndex(hasCalculator: true, sectionCounts: [])
+        expect(lone.sectionJump(1, from: 0) == 0, "a lone card stays put")
+
+        // Every shape against a brute-force read of `row(at:)`: a start is the card or offset 0.
+        for hasCalculator in [false, true] {
+            for a in 0...3 {
+                for b in 0...3 {
+                    for c in 0...3 {
+                        let index = PaletteRowIndex(hasCalculator: hasCalculator, sectionCounts: [a, b, c])
+                        let label = "jump calc=\(hasCalculator) [\(a),\(b),\(c)]"
+                        let starts = (0..<index.count).filter { flat in
+                            switch index.row(at: flat) {
+                            case .calculator, .element(_, 0): true
+                            default: false
+                            }
+                        }
+                        for from in 0..<index.count {
+                            expect(
+                                index.sectionJump(1, from: from) == (starts.first { $0 > from } ?? from),
+                                "\(label): ⌘↓ from \(from) lands on the next start")
+                            expect(
+                                index.sectionJump(-1, from: from) == (starts.last { $0 < from } ?? from),
+                                "\(label): ⌘↑ from \(from) lands on the previous start")
+                        }
+                    }
+                }
+            }
+        }
+
         print("\(passes) passed, \(failures) failed")
         if failures > 0 { exit(1) }
     }
