@@ -118,6 +118,7 @@ If a change touches anything in the right column, the harness on the left is man
 | `ActionMenuSearchTests` | Action-menu query normalization and shared fuzzy matching |
 | `AppInstallationTests` | Multiple app copies and app-wide preferences; file-favorite persistence, mixed ordering, hidden slots and restoration through the existing favorite key list |
 | `RankingTests` | `Launcher/Model/LauncherRankingStore.swift` |
+| `LauncherSectionsTests` | `Launcher/Model/LauncherSections.swift` — the launcher's section order, against a copy of the grouping the list used before it |
 | `SearchHistoryTests` | `Launcher/Model/SearchHistory.swift` — what is recorded, order and bound, the ↑ walk, a relaunch, a bad file and a clear |
 | `ScopesTests` | `Launcher/Model/SearchScopes.swift` |
 | `AppNameTests` | `Platform/AppDisplayName.swift` — every path that names a scanned bundle |
