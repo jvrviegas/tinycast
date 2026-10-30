@@ -7,6 +7,8 @@ final class AppCore {
     static let shared = AppCore()
 
     let launcherRanking: LauncherRankingStore
+    let searchHistory = SearchHistory(
+        fileURL: AppPaths.applicationSupport().appendingPathComponent("search-history.json"))
     let appIndex: AppIndex
     let customCommands = CustomCommandStore()
     let quicklinks = QuicklinkStore()

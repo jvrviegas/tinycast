@@ -127,6 +127,7 @@ run MenuSearchTests        $L/SearchRelevance.swift \
 run WindowSwitchTests      $L/SearchRelevance.swift \
                            Tinycast/Features/WindowSwitcher/Model/*.swift
 run index FileSearchPerformanceTests $FS/Model/*.swift $FILE_INDEX
+run SearchHistoryTests     $L/SearchHistory.swift
 run RankingTests           $L/SearchRelevance.swift $L/ScriptRomanization.swift \
                            $L/LauncherMatch.swift $L/LauncherRankingStore.swift
 run ScopesTests            $L/SearchScopes.swift

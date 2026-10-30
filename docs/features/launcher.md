@@ -468,6 +468,21 @@ and the sensitivity, so a launch or a reset invalidates them.
 Learned data stays on device in `launcher-ranking.json`; a result that has learned ranking offers a
 per-item reset in its Actions menu, and users can clear all learned ranking in General Settings.
 
+## Search history
+
+`SearchHistory` keeps the last 50 searches a launcher result ran from, newest first, in
+`search-history.json` under the channel's Application Support folder. It records on ↵ and on a click,
+for any row the launcher lists — an entry, a calculation, a colour, a file or a fallback. A blank query
+or one over 256 characters is ignored, and a repeat moves to the front. Searches typed in Clipboard
+History, File Search, Emoji or an extension never reach it, and a backup never carries it: a `.tinycast`
+is sent to people.
+
+↑ on the launcher's first row, or in the collapsed Compact bar, asks `older(than:)` with the field's
+text: an empty field gets the newest search, a field holding a remembered search gets the one before it,
+and any other text gets nothing, so ↑ moves the selection as it always did. The field's text is the
+cursor, so there is no walk state to go stale, and `rewriteQuery` puts the caret after it. ↓ never
+touches the history, because it has to move into the results of the search that was brought back.
+
 ## The empty list
 
 Favorites, then Meetings, then Suggestions, then one section per kind. Meetings sit above

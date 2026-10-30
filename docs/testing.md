@@ -118,6 +118,7 @@ If a change touches anything in the right column, the harness on the left is man
 | `ActionMenuSearchTests` | Action-menu query normalization and shared fuzzy matching |
 | `AppInstallationTests` | Multiple app copies and app-wide preferences; file-favorite persistence, mixed ordering, hidden slots and restoration through the existing favorite key list |
 | `RankingTests` | `Launcher/Model/LauncherRankingStore.swift` |
+| `SearchHistoryTests` | `Launcher/Model/SearchHistory.swift` — what is recorded, order and bound, the ↑ walk, a relaunch, a bad file and a clear |
 | `ScopesTests` | `Launcher/Model/SearchScopes.swift` |
 | `AppNameTests` | `Platform/AppDisplayName.swift` — every path that names a scanned bundle |
 | `LanguageTests` | `AppLanguage` and both string catalogs — compile every language, load privacy prompts, and select plural forms and independent counts at runtime |
@@ -476,6 +477,8 @@ caches, TCC grants and login item, so this cannot disturb an installed copy.
 - ⌃N/⌃P move the highlight as ↓/↑ do; ⌃F/⌃B step compact shortcuts or the emoji grid's selection, and the caret elsewhere
 - ⌘↓/⌘↑ jump between sections in the launcher, Clipboard History, the emoji picker, the ⌘K menu and an extension List or Grid,
   scrolling the row into view; ⌥⌘↑/↓ still reorders a favorite or pin, and a screen without sections treats them as ↓/↑
+- ↑ in an empty launcher field brings back the last search, with the caret after it; ↑ again steps to
+  older ones, typing ends the walk, and ↑ with the selection below the first row still moves it
 - The highlight always sits on the row the footer pill describes
 - With a calculation typed, the calculator card is first and is selected first
 - ⌘↵ on a number, unit or money card puts the answer in the search bar with the caret after it, so

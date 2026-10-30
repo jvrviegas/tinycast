@@ -268,6 +268,7 @@ struct LauncherScreen: PaletteScreen {
     }
 
     func activate(at selection: Int) {
+        if row(at: selection) != nil { core.searchHistory.record(vm.query) }
         switch row(at: selection) {
         // Error cards no-op — copyCalculatorResult only acts on value payloads.
         case .calc(let result): core.calculatorCoordinator.copyCalculatorResult(result)
@@ -549,6 +550,7 @@ struct LauncherScreen: PaletteScreen {
                 openActions()
             },
             onActivate: {
+                core.searchHistory.record(vm.query)
                 core.launcherCoordinator.launch(
                     $0, searchQuery: vm.query, arguments: core.launcherCoordinator.argumentValues(for: $0))
             },

@@ -556,13 +556,14 @@ struct RootPaletteView: View {
             .onKeyPress(keys: [.upArrow], phases: [.down, .repeat]) { press in
                 if let reorder = movePinnedOrFavorite(-1, modifiers: press.modifiers) { return reorder }
                 if vm.isControlListOpen { return .ignored }
-                if isCollapsed { return .ignored }
+                if isCollapsed { return recallSearch(press.modifiers) ?? .ignored }
                 if menuOpen {
                     if !(isSectionJump(press.modifiers) && jumpMenuSection(-1)) { moveMenu(-1) }
                     return .handled
                 }
                 if vm.isComposing { return .ignored }
                 if let jump = jumpSection(-1, modifiers: press.modifiers) { return jump }
+                if let recall = recallSearch(press.modifiers) { return recall }
                 return moveVertically(-1)
             }
             .onKeyPress(keys: [.leftArrow], phases: [.down, .repeat]) { press in
@@ -1431,6 +1432,17 @@ struct RootPaletteView: View {
         if argumentFocused != nil { returnFocusToSearchField() }
         vm.selection = next
         scroll = ScrollIntent(kind: .follow)
+        return .handled
+    }
+
+    /// ↑ on the launcher's first row, or in its collapsed bar, brings back an earlier search.
+    private func recallSearch(_ modifiers: SwiftUI.EventModifiers) -> KeyPress.Result? {
+        guard vm.mode == .launcher, !vm.isComposing, argumentFocused == nil,
+            modifiers.intersection([.command, .control, .option, .shift]).isEmpty,
+            isCollapsed || selection(in: screen) == 0,
+            let query = core.searchHistory.older(than: vm.query)
+        else { return nil }
+        vm.rewriteQuery(query)
         return .handled
     }
 
