@@ -54,6 +54,10 @@ reports notification-dependent checks as skipped when the session cannot deliver
   subtitle, an exact alternate title and a keyword hit are three different rules.
 - **`Model/SearchScopes.swift` and `Model/LauncherRankingStore.swift` are pure too** — the ranking store
   takes its clock via `now` and its path via `fileURL`, for `ScopesTests` and `RankingTests`.
+- **`Model/LauncherSections.swift` is the only place the launcher's section order is read from its
+  rows.** `LauncherList` draws its headers from it and `LauncherScreen.jumpSection` takes its ⌘↑/⌘↓ stops
+  from it, so the two cannot disagree. It follows the flat order the selection indexes and never reorders
+  to fit a fixed list of kinds: a new kind needs no entry beyond `AppIndex`'s slices.
 
 ## Search scopes
 

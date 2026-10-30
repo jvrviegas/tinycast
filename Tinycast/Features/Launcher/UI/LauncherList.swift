@@ -92,65 +92,48 @@ struct LauncherList: View {
         return selectedRowID != nil && selectedRowID == (favorites.first?.id ?? results.first?.id)
     }
 
-    private var fileRows: [Row] {
-        guard let files else { return [] }
-        return [.header(String(localized: "Files"))]
-            + files.results.enumerated().map { Row.file($1, index: $0) }
-    }
-
-    /// Every row the fallback section contributes, always after the results.
-    private var fallbackRows: [Row] {
-        guard let fallbacks else { return [] }
-        return [.fallbackHeader(fallbacks.title)]
-            + fallbacks.entries.enumerated().map { Row.fallback($1, index: $0) }
-    }
-
     private var rows: [Row] {
+        let sections = LauncherSections(
+            hasCard: card != nil, favorites: favorites.count, meetings: meetingCount,
+            suggestions: suggestionCount, matches: matchCount,
+            rest: results.dropFirst(meetingCount + suggestionCount + matchCount).map(\.kind),
+            files: files?.results.count ?? 0, fallbacks: fallbacks?.entries.count ?? 0)
         var rows: [Row] = []
-        if let card { rows = [.header(card.sectionTitle), .card(card)] }
-        let meetings = results.prefix(meetingCount)
-        let suggestions = results.dropFirst(meetingCount).prefix(suggestionCount)
-        let pinnedCount = meetingCount + suggestionCount
-        let matches = results.dropFirst(pinnedCount).prefix(matchCount)
-        let rest = results.dropFirst(pinnedCount + matchCount)
-        var grouped: [AppEntry.Kind: [AppEntry]] = [:]
-        for app in rest { grouped[app.kind, default: []].append(app) }
-        if !favorites.isEmpty {
-            rows.append(.header(String(localized: "Favorites")))
-            rows.append(
-                contentsOf: favorites.enumerated().map {
-                    .favorite($1, index: $0)
-                })
+        var consumed = 0
+        func apps(_ count: Int) -> [Row] {
+            defer { consumed += count }
+            return results.dropFirst(consumed).prefix(count).map { .app($0) }
         }
-        if !meetings.isEmpty {
-            rows.append(.header(AppEntry.Kind.meeting.descriptor.sectionTitle.resolved()))
-            rows.append(contentsOf: meetings.map { .app($0) })
+        for section in sections.sections {
+            switch section.kind {
+            case .card:
+                if let card { rows += [.header(card.sectionTitle), .card(card)] }
+            case .favorites:
+                rows.append(.header(String(localized: "Favorites")))
+                rows += favorites.enumerated().map { .favorite($1, index: $0) }
+            case .meetings:
+                rows.append(.header(AppEntry.Kind.meeting.descriptor.sectionTitle.resolved()))
+                rows += apps(section.count)
+            case .suggestions:
+                rows.append(.header(String(localized: "Suggestions")))
+                rows += apps(section.count)
+            case .results:
+                rows.append(.header(String(localized: "Results")))
+                rows += apps(section.count)
+            case .group(let kind):
+                rows.append(.header(kind.descriptor.sectionTitle.resolved()))
+                rows += apps(section.count)
+            case .files:
+                guard let files else { break }
+                rows.append(.header(String(localized: "Files")))
+                rows += files.results.enumerated().map { Row.file($1, index: $0) }
+            case .fallbacks:
+                guard let fallbacks else { break }
+                rows.append(.fallbackHeader(fallbacks.title))
+                rows += fallbacks.entries.enumerated().map { Row.fallback($1, index: $0) }
+            }
         }
-        if !suggestions.isEmpty {
-            rows.append(.header(String(localized: "Suggestions")))
-            rows.append(contentsOf: suggestions.map { .app($0) })
-        }
-        if !matches.isEmpty {
-            rows.append(.header(String(localized: "Results")))
-            rows.append(contentsOf: matches.map { .app($0) })
-        }
-        // Publication order, so rows match the flat index.
-        let kinds: [AppEntry.Kind] = [
-            .meeting, .application, .systemSettings, .extensionCommand, .quicklink, .appleShortcut,
-            .snippet, .systemAction, .windowLayout, .windowRoom, .windowCommand, .customCommand,
-            .quickAction, .command
-        ]
-        for kind in kinds {
-            guard let group = grouped[kind], !group.isEmpty else { continue }
-            rows.append(.header(kind.descriptor.sectionTitle.resolved()))
-            rows.append(contentsOf: group.map { .app($0) })
-        }
-        // A missing kind would make every later row activate its neighbour: assert instead.
-        assert(
-            grouped.keys.allSatisfy(kinds.contains),
-            "kind missing from the launcher's section order: "
-                + grouped.keys.filter { !kinds.contains($0) }.map(\.rawValue).joined(separator: ", "))
-        return rows + fileRows + fallbackRows
+        return rows
     }
 
     var body: some View {

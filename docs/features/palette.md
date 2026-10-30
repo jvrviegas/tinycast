@@ -683,9 +683,9 @@ The ⌘K menu jumps the same way. `PaletteMenuContent.sectionStarts` marks each 
 first *selectable* row, skipping a section with none. A menu built without sections leaves ⌘↑/⌘↓ to
 whatever handled them before.
 
-A screen's section counts must agree with how its view groups rows, or a jump lands mid-section.
-`LauncherScreen` relies on the results past the matches arriving grouped by kind; `ClipboardItem.sectionTitle`
-is the one rule both the Clipboard list and its jump read.
+A screen's section counts must agree with how its view groups rows, or a jump lands mid-section, so each
+screen has one rule both read: `LauncherSections` for the launcher and `ClipboardItem.sectionTitle` for
+Clipboard History.
 
 ## The keyboard belongs to the search field
 
