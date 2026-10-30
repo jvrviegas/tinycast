@@ -180,6 +180,7 @@ If a change touches anything in the right column, the harness on the left is man
 | `ExtensionVersionTests` | `Extensions/Service/ExtensionVersionStore.swift` — what an update check reports, adopts and forgets |
 | `ExtensionMetadataTests` | `Extensions/Service/ExtensionCommandMetadataStore.swift` — round-trip, failure runs, uninstall |
 | `ExtensionTests` | the extension runtime and native menu-bar lifecycle — boots shipped sources in JavaScriptCore; menu tests cover restoration, refresh serialization, actions and teardown; fetch tests cover HTTP connection cleanup, cancellation and request isolation |
+| `ExtensionSectionJumpTests` | `Extensions/Model/ExtensionSectionJump.swift` — ⌘↓/⌘↑ stops over a List or Grid's sections |
 | `ExtensionIconTests` | `Extensions/Service/ExtensionIconCache.swift` — artwork sizing and its fallback |
 | `ExtensionSignInTests` | `Extensions/Service/ExtensionSignInSession.swift` — browser start failures, completion, cancellation without a callback, and late callbacks after teardown |
 | `IconCacheTests` | `Platform/Images/IconCache.swift` — row sizing at 1×/2×, warm reuse, stamp and style invalidation, bitmap release, fitted geometry across all 256 alpha values, and that a row icon draws identically to the 96px one |
@@ -473,7 +474,7 @@ caches, TCC grants and login item, so this cannot disturb an installed copy.
   candidate is committed — check on a second summon too, where first responder never moved
 - Typing filters instantly; ↑/↓ move the highlight and scroll it into view without yanking the list
 - ⌃N/⌃P move the highlight as ↓/↑ do; ⌃F/⌃B step compact shortcuts or the emoji grid's selection, and the caret elsewhere
-- ⌘↓/⌘↑ jump between sections in the launcher, Clipboard History, the emoji picker and the ⌘K menu,
+- ⌘↓/⌘↑ jump between sections in the launcher, Clipboard History, the emoji picker, the ⌘K menu and an extension List or Grid,
   scrolling the row into view; ⌥⌘↑/↓ still reorders a favorite or pin, and a screen without sections treats them as ↓/↑
 - The highlight always sits on the row the footer pill describes
 - With a calculation typed, the calculator card is first and is selected first

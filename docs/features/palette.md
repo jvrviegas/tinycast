@@ -673,7 +673,9 @@ only modifier: ⌥⌘↑/↓ still reorders a favorite or a pin.
 
 A screen opts in with `PaletteScreen.jumpSection(_:from:)` and answers through
 `PaletteRowIndex.sectionJump`, so the section boundaries live in one pure place. The launcher, Clipboard
-History and the emoji picker do. Every other screen returns nil, and ⌘↓ stays a plain ↓ there, as does
+History and the emoji picker do, and an extension's List or Grid does through its own
+`ExtensionSectionJump`, which keeps extension navigation inside `Features/Extensions/`. Every other
+screen returns nil, and ⌘↓ stays a plain ↓ there, as does
 any screen whose selected row `ownsVerticalKeys`. A lead card counts as a section of its own.
 
 The ⌘K menu jumps the same way. `PaletteMenuContent.sectionStarts` marks each section — a row with

@@ -241,7 +241,8 @@ and [Background Refresh](https://developers.raycast.com/information/lifecycle/ba
 the palette relies on maps 1:1 onto visible rows — the same invariant the launcher, clipboard and emoji
 screens hold (see [palette.md](palette.md)).
 
-- **List / Grid** — sections and items flattened in render order. When `filtering` is on (Raycast's
+- **List / Grid** — sections and items flattened in render order; ⌘↓/⌘↑ jump to the first row of the
+  next or current section through `ExtensionSectionJump`, never the palette's `PaletteRowIndex`. When `filtering` is on (Raycast's
   default unless the command supplies `onSearchTextChange`) rows are filtered with the launcher's own
   `FuzzyMatch` over title, subtitle and keywords, and a section whose items all drop loses its header
   too. `isShowingDetail` splits the screen into rows plus a detail pane and drops each row's

@@ -58,6 +58,15 @@ struct ExtensionCommandScreen: PaletteScreen {
         }
     }
 
+    func jumpSection(_ delta: Int, from selection: Int) -> Int? {
+        switch screen.kind {
+        case .list, .grid:
+            return ExtensionSectionJump(counts: screen.sectionCounts).target(delta, from: selection)
+        case .detail, .form, .unsupported:
+            return nil
+        }
+    }
+
     private func primaryAction(at selection: Int) -> ExtensionAction? {
         ExtensionScreen.actions(in: screen.actionPanel(forItemAt: selection)).first
     }

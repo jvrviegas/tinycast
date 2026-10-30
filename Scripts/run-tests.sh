@@ -729,6 +729,7 @@ run ExtensionFormTests     $E/Model/ExtensionFormMetrics.swift \
                            $E/UI/ExtensionListKey.swift \
                            Tests/ExtensionListKeyTests.swift
 run ExtensionImageSizeTests $E/Model/ExtensionImageSize.swift
+run ExtensionSectionJumpTests $E/Model/ExtensionSectionJump.swift
 run ExtensionSignInTests   $E/Service/ExtensionSignInSession.swift
 run ExtensionAccessoryTests $E/Model/RenderNode.swift \
                            $E/Model/ExtensionPickerItem.swift \
