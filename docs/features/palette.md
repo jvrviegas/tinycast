@@ -676,6 +676,11 @@ A screen opts in with `PaletteScreen.jumpSection(_:from:)` and answers through
 History and the emoji picker do. Every other screen returns nil, and ⌘↓ stays a plain ↓ there, as does
 any screen whose selected row `ownsVerticalKeys`. A lead card counts as a section of its own.
 
+The ⌘K menu jumps the same way. `PaletteMenuContent.sectionStarts` marks each section — a row with
+`startsSection` or a `sectionTitle` — and `PaletteRowIndex.landings` puts the highlight on a section's
+first *selectable* row, skipping a section with none. A menu built without sections leaves ⌘↑/⌘↓ to
+whatever handled them before.
+
 A screen's section counts must agree with how its view groups rows, or a jump lands mid-section.
 `LauncherScreen` relies on the results past the matches arriving grouped by kind; `ClipboardItem.sectionTitle`
 is the one rule both the Clipboard list and its jump read.

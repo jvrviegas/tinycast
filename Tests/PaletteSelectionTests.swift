@@ -469,6 +469,31 @@ struct PaletteSelectionTests {
             }
         }
 
+        // The ⌘K menu: a section lands on its first selectable row, and one with none is skipped.
+        let menuStarts = [0, 3, 5]
+        let allOn = PaletteRowIndex.landings(sectionStarts: menuStarts, rowCount: 7) { _ in true }
+        expect(allOn == [0, 3, 5], "every section lands on its first row when all are selectable")
+        let firstOff = PaletteRowIndex.landings(sectionStarts: menuStarts, rowCount: 7) { $0 != 3 }
+        expect(firstOff == [0, 4, 5], "a disabled first row hands the landing to the next one")
+        let sectionOff = PaletteRowIndex.landings(sectionStarts: menuStarts, rowCount: 7) { $0 != 3 && $0 != 4 }
+        expect(sectionOff == [0, 5], "a section with nothing selectable is skipped")
+        let allOff = PaletteRowIndex.landings(sectionStarts: menuStarts, rowCount: 7) { _ in false }
+        expect(allOff.isEmpty, "a menu with nothing selectable has nowhere to land")
+        let noSections = PaletteRowIndex.landings(sectionStarts: [], rowCount: 4) { _ in true }
+        expect(noSections.isEmpty, "a menu that reports no sections has nowhere to land")
+
+        let stops = [0, 3, 5]
+        for (from, down) in [(0, 3), (1, 3), (3, 5), (4, 5), (5, 5), (6, 6)] {
+            expect(
+                PaletteRowIndex.jump(1, from: from, among: stops) == down, "menu ⌘↓ from \(from) lands on \(down)")
+        }
+        for (from, up) in [(0, 0), (1, 0), (3, 0), (4, 3), (5, 3), (6, 5)] {
+            expect(
+                PaletteRowIndex.jump(-1, from: from, among: stops) == up, "menu ⌘↑ from \(from) lands on \(up)")
+        }
+        expect(PaletteRowIndex.jump(1, from: 2, among: []) == 2, "no landings leaves ⌘↓ where it is")
+        expect(PaletteRowIndex.jump(-1, from: 2, among: []) == 2, "no landings leaves ⌘↑ where it is")
+
         print("\(passes) passed, \(failures) failed")
         if failures > 0 { exit(1) }
     }

@@ -43,8 +43,23 @@ struct PaletteRowIndex: Equatable {
             starts.append(next)
             next += sectionCount
         }
-        let target = delta > 0 ? starts.first { $0 > selection } : starts.last { $0 < selection }
+        return Self.jump(delta, from: selection, among: starts)
+    }
+
+    /// The nearest of `landings` past `selection` in `delta`'s direction, or `selection` when none.
+    static func jump(_ delta: Int, from selection: Int, among landings: [Int]) -> Int {
+        let target = delta > 0 ? landings.first { $0 > selection } : landings.last { $0 < selection }
         return target ?? selection
+    }
+
+    /// A menu's stops: each section's first selectable row, so a section with none is skipped.
+    static func landings(
+        sectionStarts: [Int], rowCount: Int, isSelectable: (Int) -> Bool
+    ) -> [Int] {
+        let bounds = sectionStarts + [rowCount]
+        return zip(bounds, bounds.dropFirst()).compactMap { start, end in
+            (start..<end).first(where: isSelectable)
+        }
     }
 
     /// The inverse of `row(at:)` — where a screen puts the highlight after its own list moves.

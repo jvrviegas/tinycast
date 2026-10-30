@@ -9,6 +9,8 @@ enum PaletteAxis {
     let rowCount: Int
     let preferredSelection: Int?
     let isSelectable: (Int) -> Bool
+    /// Each section's first row, the menu's own included; empty when ⌘↓/⌘↑ have nowhere to go.
+    let sectionStarts: [Int]
     /// Built on demand: `moveMenu` resolves the open menu on every arrow key.
     let view: (MenuPanelCorner) -> AnyView
     /// Bounds-checked by the caller against `rowCount`, so a row index is always one this menu has.
@@ -18,13 +20,15 @@ enum PaletteAxis {
         rowCount: Int, preferredSelection: Int? = nil,
         view: @escaping (MenuPanelCorner) -> AnyView,
         activate: @escaping (Int) -> Void,
-        isSelectable: @escaping (Int) -> Bool = { _ in true }
+        isSelectable: @escaping (Int) -> Bool = { _ in true },
+        sectionStarts: [Int] = []
     ) {
         self.rowCount = rowCount
         self.preferredSelection = preferredSelection
         self.view = view
         self.activate = activate
         self.isSelectable = isSelectable
+        self.sectionStarts = sectionStarts
     }
 
     init(
@@ -44,7 +48,10 @@ enum PaletteAxis {
                         extraRowsHeight: extraRowsHeight))
             },
             activate: { popover.items[$0].action() },
-            isSelectable: { popover.items[$0].isSelectable })
+            isSelectable: { popover.items[$0].isSelectable },
+            sectionStarts: popover.items.indices.filter {
+                $0 == 0 || popover.items[$0].startsSection || popover.items[$0].sectionTitle != nil
+            })
     }
 }
 

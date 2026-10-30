@@ -535,7 +535,7 @@ struct RootPaletteView: View {
                 if let reorder = movePinnedOrFavorite(1, modifiers: press.modifiers) { return reorder }
                 if vm.isControlListOpen { return .ignored }
                 if menuOpen {
-                    moveMenu(1)
+                    if !(isSectionJump(press.modifiers) && jumpMenuSection(1)) { moveMenu(1) }
                     return .handled
                 }
                 // Marked text owns these keys: an IME drives its candidate window with them.
@@ -558,7 +558,7 @@ struct RootPaletteView: View {
                 if vm.isControlListOpen { return .ignored }
                 if isCollapsed { return .ignored }
                 if menuOpen {
-                    moveMenu(-1)
+                    if !(isSectionJump(press.modifiers) && jumpMenuSection(-1)) { moveMenu(-1) }
                     return .handled
                 }
                 if vm.isComposing { return .ignored }
@@ -1279,6 +1279,10 @@ struct RootPaletteView: View {
         case .some(.upArrow) where navigationModifiers.isEmpty:
             moveMenu(-1)
             return true
+        case .some(.downArrow) where navigationModifiers == .command:
+            if jumpMenuSection(1) { return true }
+        case .some(.upArrow) where navigationModifiers == .command:
+            if jumpMenuSection(-1) { return true }
         case .some(.carriageReturn), .some(.enter):
             let screen = screen
             let selection = selection(in: screen)
@@ -1412,11 +1416,14 @@ struct RootPaletteView: View {
         return .handled
     }
 
+    /// ⌘ alone: ⌥⌘ reorders and ⌃⌘ or ⇧⌘ are left to their own handlers.
+    private func isSectionJump(_ modifiers: SwiftUI.EventModifiers) -> Bool {
+        modifiers.intersection([.command, .control, .option, .shift]) == .command
+    }
+
     /// Nil unless ⌘ alone is held on a screen with sections, so every other press moves as before.
     private func jumpSection(_ delta: Int, modifiers: SwiftUI.EventModifiers) -> KeyPress.Result? {
-        guard modifiers.intersection([.command, .control, .option, .shift]) == .command else {
-            return nil
-        }
+        guard isSectionJump(modifiers) else { return nil }
         let screen = screen
         guard !screen.ownsVerticalKeys(at: selection(in: screen)),
             let next = screen.jumpSection(delta, from: selection(in: screen))
@@ -1464,6 +1471,16 @@ struct RootPaletteView: View {
             }
             row += delta
         }
+    }
+
+    /// False for a menu without sections, which leaves ⌘↑/⌘↓ to whatever handled them before.
+    private func jumpMenuSection(_ delta: Int) -> Bool {
+        guard let content = menuContent, !content.sectionStarts.isEmpty else { return false }
+        let stops = PaletteRowIndex.landings(
+            sectionStarts: content.sectionStarts, rowCount: content.rowCount,
+            isSelectable: content.isSelectable)
+        menuSelection = PaletteRowIndex.jump(delta, from: menuSelection, among: stops)
+        return true
     }
 
     private func activateMenuItem(_ index: Int) {
