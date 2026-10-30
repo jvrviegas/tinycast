@@ -438,10 +438,13 @@ looks equivalent and is not, because FindMy's raw `Info.plist` names it `FindMy`
 only in the loctable.
 
 A loctable read costs ~0.2 ms per bundle and the scan reruns on every launcher open, so
-`BundleNameCache` memoizes the names per bundle path and re-reads only when the bundle's modification
-date moves. Each pass is seeded from the last and keeps only what it looked at, so uninstalled apps
-fall out instead of accumulating; a changed system language drops the whole table, because the names
-in it are in the old one. `SettingsPaneScanner` runs the same `BundleLocalization` walk for the
+`BundleInfoCache` memoizes the names, and the few `Info.plist` facts the scan reads, per bundle path,
+re-reading only when the bundle's modification date moves. Each pass is seeded from the last and keeps
+only what it looked at, so uninstalled apps fall out instead of accumulating; a changed system language
+drops the whole table, because the names in it are in the old one. The scan never opens a
+`Bundle(url:)`: Foundation keeps every bundle it opens for the life of the process, which held 183
+bundles (about 1.6 MB) on a Mac with 182 apps. Reading the plist directly instead costs 30 ms per warm
+scan, which is why the facts ride in the cache: a warm scan of those 182 apps takes about 11 ms. `SettingsPaneScanner` runs the same `BundleLocalization` walk for the
 `.appex` panes, and retires its cache when either the extensions folder or the language list moves.
 Headphones and Battery are named junk or nothing in every table, so their `nameOverrides` entry
 replaces the walk.

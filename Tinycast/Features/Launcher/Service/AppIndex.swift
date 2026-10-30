@@ -391,7 +391,7 @@ final class AppIndex {
     private var hiddenCommands: Set<CommandID> = []
     /// Kept out of launcher search by a "Show in launcher" switch, yet still runnable by shortcut.
     private var unlistedCommands: Set<CommandID> = []
-    private var nameCache = BundleNameCache()
+    private var infoCache = BundleInfoCache()
     private var paneCache: SettingsPaneScanner.Cache?
     private var isRefreshing = false
     /// Set when a refresh lands mid-scan, so a scope edit is never silently dropped.
@@ -572,12 +572,12 @@ final class AppIndex {
             let scopes = settings?.searchScopes ?? SearchScopes.defaults
             let reusingPanes = paneCache
             let languages = BundleLocalization.indexedLanguages(SystemLanguages.preferred)
-            let reusing = BundleNameCache(reusing: nameCache, languages: languages)
+            let reusing = BundleInfoCache(reusing: infoCache, languages: languages)
             let (found, cache, panes) = await Task.detached(priority: .utility) {
                 AppIndex.scan(
                     scopes: scopes, languages: languages, cache: reusing, paneCache: reusingPanes)
             }.value
-            nameCache = cache
+            infoCache = cache
             paneCache = panes
             guard found != discoveredEntries else { continue }
             discoveredEntries = found
@@ -593,32 +593,31 @@ final class AppIndex {
     }
 
     nonisolated private static func scan(
-        scopes: [String], languages: [String], cache: BundleNameCache,
+        scopes: [String], languages: [String], cache: BundleInfoCache,
         paneCache: SettingsPaneScanner.Cache?
-    ) -> ([AppEntry], BundleNameCache, SettingsPaneScanner.Cache?) {
+    ) -> ([AppEntry], BundleInfoCache, SettingsPaneScanner.Cache?) {
         Signposts.interval("AppIndex.scan") {
             var cache = cache
             var indexByBundleID: [String: Int] = [:]
             var paths = Set<String>()
             var result: [AppEntry] = []
-            for url in SearchScopes.appBundles(in: scopes) {
+            let bundles = SearchScopes.appBundles(
+                in: scopes, version: { cache.info(for: $0).shortVersion ?? "" })
+            for url in bundles {
                 let path = url.resolvingSymlinksInPath().standardizedFileURL.path
                 guard paths.insert(path).inserted else { continue }
-                let bundle = Bundle(url: url)
-                let bundleID = bundle?.bundleIdentifier
+                let info = cache.info(for: url)
+                let bundleID = info.identifier
                 let fileName = EntryNaming.strippingAppExtension(url.lastPathComponent)
                 // Finder's rule: LaunchServices ignores a display name the file name contradicts.
-                let names = cache.names(
-                    for: url, base: fileName, developmentRegion: bundle?.developmentLocalization)
-                // Raw: a localized strings file can swap this array for a plain name.
-                let alternates = bundle?.infoDictionary?["CFBundleAlternateNames"] as? [String] ?? []
-                let declared = (bundle?.infoDictionary).flatMap(AppDisplayName.inInfo)
+                let names = cache.names(for: url, base: fileName)
                 var entry = AppEntry(
                     id: path, name: names.first ?? fileName, url: url, bundleID: bundleID,
                     kind: .application,
-                    subtitle: AppDisplayName.named(bundle?.infoDictionary?["CFBundleShortVersionString"]),
-                    alternateTitles: Array(names.dropFirst()) + alternates,
-                    keywords: declared.map { [$0] } ?? [], iconStamp: FileIconStamp.value(for: url),
+                    subtitle: AppDisplayName.named(info.shortVersion),
+                    alternateTitles: Array(names.dropFirst()) + info.alternateNames,
+                    keywords: info.declaredName.map { [$0] } ?? [],
+                    iconStamp: FileIconStamp.value(for: url),
                     installedAt: try? url.resourceValues(forKeys: [.addedToDirectoryDateKey])
                         .addedToDirectoryDate)
                 entry.addAlternateTitle(fileName)

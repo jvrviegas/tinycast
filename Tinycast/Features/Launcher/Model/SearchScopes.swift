@@ -37,16 +37,20 @@ enum SearchScopes {
     ]
 
     /// Every `.app` the scopes point at. One subfolder deep; deeper nesting needs its own scope.
-    static func appBundles(in scopes: [String]) -> [URL] {
+    static func appBundles(
+        in scopes: [String], version: (URL) -> String = shortVersion(of:)
+    ) -> [URL] {
         let fm = FileManager.default
         var result: [URL] = []
         for scope in scopes {
             let url = URL(fileURLWithPath: expand(scope))
             if url.pathExtension == "app" {
-                if fm.fileExists(atPath: url.path) { result.append(contentsOf: withEmbedded(url)) }
+                if fm.fileExists(atPath: url.path) {
+                    result.append(contentsOf: withEmbedded(url, version: version))
+                }
                 continue
             }
-            result.append(contentsOf: appBundles(under: url, subfolderDepth: 1))
+            result.append(contentsOf: appBundles(under: url, subfolderDepth: 1, version: version))
         }
         var seen = Set<String>()
         return result.filter { seen.insert($0.standardizedFileURL.path).inserted }
@@ -54,7 +58,8 @@ enum SearchScopes {
 
     /// An `.app` is never descended into beyond its embedded-app folders.
     private static func appBundles(
-        under url: URL, subfolderDepth: Int, ancestors: Set<String> = []
+        under url: URL, subfolderDepth: Int, ancestors: Set<String> = [],
+        version: (URL) -> String
     ) -> [URL] {
         let fm = FileManager.default
         var isDirectory: ObjCBool = false
@@ -78,22 +83,24 @@ enum SearchScopes {
             }
 
         var result: [URL] = []
-        for item in newestFirst(scopedItems) {
+        for item in newestFirst(scopedItems, version: version) {
             if item.pathExtension == "app" {
-                result.append(contentsOf: withEmbedded(item, ancestors: ancestors))
+                result.append(contentsOf: withEmbedded(item, ancestors: ancestors, version: version))
             } else if subfolderDepth > 0 {
                 result.append(
                     contentsOf: appBundles(
-                        under: item, subfolderDepth: subfolderDepth - 1, ancestors: ancestors))
+                        under: item, subfolderDepth: subfolderDepth - 1, ancestors: ancestors,
+                        version: version))
             }
         }
         return result
     }
 
     /// The scan keeps a bundle ID's first copy, so a folder lists its newest version first.
-    private static func newestFirst(_ items: [URL]) -> [URL] {
+    private static func newestFirst(_ items: [URL], version: (URL) -> String) -> [URL] {
         items
-            .map { (url: $0, version: shortVersion(of: $0)) }
+            // Empty for a folder, which `.numeric` ranks below every real version.
+            .map { (url: $0, version: $0.pathExtension == "app" ? version($0) : "") }
             .sorted { lhs, rhs in
                 let byVersion = lhs.version.compare(rhs.version, options: .numeric)
                 if byVersion != .orderedSame { return byVersion == .orderedDescending }
@@ -104,10 +111,10 @@ enum SearchScopes {
             .map(\.url)
     }
 
-    /// Empty when unreadable, which `.numeric` ranks below every real version.
-    private static func shortVersion(of url: URL) -> String {
-        guard url.pathExtension == "app" else { return "" }
-        return Bundle(url: url)?.infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
+    /// Empty when unreadable; not `Bundle(url:)`, which Foundation keeps for the process lifetime.
+    static func shortVersion(of url: URL) -> String {
+        let info = CFBundleCopyInfoDictionaryForURL(url as CFURL) as? [String: Any]
+        return info?["CFBundleShortVersionString"] as? String ?? ""
     }
 
     /// Without `.app`, so `Xcode` sorts before `Xcode-beta` rather than after it.
@@ -115,10 +122,14 @@ enum SearchScopes {
         url.deletingPathExtension().lastPathComponent
     }
 
-    private static func withEmbedded(_ app: URL, ancestors: Set<String> = []) -> [URL] {
+    private static func withEmbedded(
+        _ app: URL, ancestors: Set<String> = [], version: (URL) -> String
+    ) -> [URL] {
         [app]
             + embeddedAppFolders.flatMap {
-                appBundles(under: app.appendingPathComponent($0), subfolderDepth: 0, ancestors: ancestors)
+                appBundles(
+                    under: app.appendingPathComponent($0), subfolderDepth: 0, ancestors: ancestors,
+                    version: version)
             }
     }
 

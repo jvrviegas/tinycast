@@ -146,7 +146,7 @@ run AppInstallationTests   $L/SearchRelevance.swift $L/ScriptRomanization.swift 
                            $FS/Model/FileSearchResult.swift \
                            Tinycast/Features/Launcher/Service/AliasStore.swift \
                            Tinycast/Features/Launcher/Service/VisibilityStore.swift \
-                           Tinycast/Features/Launcher/Service/BundleNameCache.swift \
+                           Tinycast/Features/Launcher/Service/BundleInfoCache.swift \
                            Tinycast/Platform/AppDisplayName.swift Tinycast/Platform/BundleLocalization.swift \
                            Tinycast/Platform/SystemLanguages.swift \
                            Tinycast/Platform/Images/FileIconStamp.swift Tinycast/Platform/Memo.swift \
