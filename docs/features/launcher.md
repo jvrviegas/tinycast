@@ -483,6 +483,11 @@ and any other text gets nothing, so ↑ moves the selection as it always did. Th
 cursor, so there is no walk state to go stale, and `rewriteQuery` puts the caret after it. ↓ never
 touches the history, because it has to move into the results of the search that was brought back.
 
+Settings › General › Search › **Search history** clears it through `SearchHistory.clear()`, behind a
+confirmation dialog like Learned ranking's reset beside it; the button is disabled while it is empty.
+The clear removes the file through the same chained write as a record, so a clear right after a search
+cannot be undone by that search's write landing late.
+
 ## The empty list
 
 Favorites, then Meetings, then Suggestions, then one section per kind. Meetings sit above

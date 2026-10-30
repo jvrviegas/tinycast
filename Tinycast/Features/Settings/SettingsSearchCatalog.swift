@@ -183,6 +183,9 @@ enum SettingsSearchCatalog {
             .generalSearch, "Learned ranking",
             keywords: ["reset", "history", "order", "privacy"]),
         .init(
+            .generalSearch, "Search history",
+            keywords: ["recent", "previous", "queries", "up arrow", "clear", "privacy"]),
+        .init(
             group: .generalDeepLinks, "Deeplinks",
             keywords: ["link", "url", "tinycast://", "allow", "karabiner", "shortcuts", "automation"])
     ]

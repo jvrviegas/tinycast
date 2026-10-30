@@ -479,6 +479,8 @@ caches, TCC grants and login item, so this cannot disturb an installed copy.
   scrolling the row into view; ⌥⌘↑/↓ still reorders a favorite or pin, and a screen without sections treats them as ↓/↑
 - ↑ in an empty launcher field brings back the last search, with the caret after it; ↑ again steps to
   older ones, typing ends the walk, and ↑ with the selection below the first row still moves it
+- Settings › General › Search › Search history: Clear… is disabled while there is none, asks first, and
+  afterwards ↑ in an empty field moves the selection again; Cancel and Esc change nothing
 - The highlight always sits on the row the footer pill describes
 - With a calculation typed, the calculator card is first and is selected first
 - ⌘↵ on a number, unit or money card puts the answer in the search bar with the caret after it, so

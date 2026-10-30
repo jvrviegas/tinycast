@@ -5,6 +5,7 @@ struct GeneralSettingsView: View {
     @Environment(AppSettings.self) private var settings
     private var launcherRanking: LauncherRankingStore { core.launcherRanking }
     @State private var confirmingRankingReset = false
+    @State private var confirmingSearchHistoryClear = false
     @State private var inputSources: [InputSourceSwitcher.Option] = []
 
     var body: some View {
@@ -137,6 +138,27 @@ struct GeneralSettingsView: View {
                 } label: {
                     SettingsRowTitle(.generalSearch, "Learned ranking")
                     Text("Learned privately from the results you pick.")
+                }
+                LabeledContent {
+                    Button("Clear…", role: .destructive) {
+                        confirmingSearchHistoryClear = true
+                    }
+                    .disabled(core.searchHistory.isEmpty)
+                } label: {
+                    SettingsRowTitle(.generalSearch, "Search history")
+                    Text("Press ↑ in an empty search field to bring back a recent search.")
+                }
+                .confirmationDialog(
+                    "Clear search history?",
+                    isPresented: $confirmingSearchHistoryClear,
+                    titleVisibility: .visible
+                ) {
+                    Button("Clear History", role: .destructive) {
+                        core.searchHistory.clear()
+                    }
+                    Button("Cancel", role: .cancel) {}
+                } message: {
+                    Text("Every remembered search goes. This can't be undone.")
                 }
             } header: {
                 SettingsSectionHeader(.generalSearch)
