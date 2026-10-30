@@ -437,6 +437,7 @@
 		7B25CD1684D24C164346AA68 /* SnippetEditorScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = F590D5052075C9E121306FEE /* SnippetEditorScreen.swift */; };
 		7B32E6EE86458C854D76B0AF /* RoomWindowSweep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D1BD03E0327890BD4E68988 /* RoomWindowSweep.swift */; };
 		7BDB7CF7F1352015F6AC96C3 /* SnippetsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 375734577C888260A8023181 /* SnippetsStore.swift */; };
+		7C0C505E50818A6EE98E7672 /* ClipboardPNGRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2D3AA496DC599E3DBEDDF5D /* ClipboardPNGRunner.swift */; };
 		7C2AA1D827EC87533021BD74 /* SpaceSwitcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C021D578082B4FE98D27CAC /* SpaceSwitcher.swift */; };
 		7C50BD05E665B2F5A07A5143 /* CalcFinance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86881DC289D026B2C0BC4442 /* CalcFinance.swift */; };
 		7C9A5A09B871FC42F3195AC8 /* AIScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27021D72339800AA6DA3D3FF /* AIScreen.swift */; };
@@ -1633,6 +1634,7 @@
 		C0599199132DAFBE12C59FBD /* MeetingDay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingDay.swift; sourceTree = "<group>"; };
 		C06BD8A507191F2621FCFFC7 /* FormFieldChrome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormFieldChrome.swift; sourceTree = "<group>"; };
 		C214E40D42F4812F141C16A8 /* ColorPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPreview.swift; sourceTree = "<group>"; };
+		C2D3AA496DC599E3DBEDDF5D /* ClipboardPNGRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardPNGRunner.swift; sourceTree = "<group>"; };
 		C2EAA357A9F0317320CFAADF /* TerminalLogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerminalLogView.swift; sourceTree = "<group>"; };
 		C3C83D437500107168E12647 /* QuickActionSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickActionSettings.swift; sourceTree = "<group>"; };
 		C3CAC74EF89303B0B75D5466 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -2802,6 +2804,7 @@
 			isa = PBXGroup;
 			children = (
 				197035E213BEBA67DDA3377B /* ClipboardManager.swift */,
+				C2D3AA496DC599E3DBEDDF5D /* ClipboardPNGRunner.swift */,
 				8D7D18BE38D2CD54CE6AB6DC /* ClipboardTextExtractor.swift */,
 				82DB32B7ACED5BE2BEE7451F /* ClipboardTextHelper.swift */,
 				D0DAB24CD8B804E92AEACEE8 /* ClipboardTextIndexer.swift */,
@@ -4339,6 +4342,7 @@
 				AD9753D6EAF202B6E31510EB /* ClipboardFilter.swift in Sources */,
 				1F8F2135470F74627A644ACC /* ClipboardFilterButton.swift in Sources */,
 				A64891F5587F2C11E4A2E2D2 /* ClipboardManager.swift in Sources */,
+				7C0C505E50818A6EE98E7672 /* ClipboardPNGRunner.swift in Sources */,
 				935F7433BB0C0ECDE6FA3BF3 /* ClipboardScreen.swift in Sources */,
 				D4A45373662D6658706E4DA4 /* ClipboardSettingsView.swift in Sources */,
 				3155DE3A2195764DDEA97F26 /* ClipboardStore.swift in Sources */,

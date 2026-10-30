@@ -219,6 +219,10 @@ run ClipboardTextTests     Tinycast/Features/Clipboard/Model/*.swift Tinycast/Pl
                            Tinycast/Features/Clipboard/Service/ClipboardTextIndexer.swift \
                            Tinycast/Features/Clipboard/Service/ClipboardTextWorker.swift \
                            Tinycast/Platform/ProcessExit.swift
+run ClipboardPNGTests      Tinycast/Features/Clipboard/Model/*.swift Tinycast/Platform/Images/ImageDerivative.swift $Q \
+                           Tinycast/Features/Clipboard/Service/ClipboardPNGRunner.swift \
+                           Tinycast/Features/Clipboard/Service/ClipboardTextWorker.swift \
+                           Tinycast/Platform/ProcessExit.swift
 run PasteboardTests        Tinycast/Platform/PasteboardFiles.swift \
                            Tinycast/Features/Clipboard/Model/ClipboardStore.swift \
                            Tinycast/Platform/Images/ImageDerivative.swift \
@@ -228,6 +232,9 @@ run PasteboardTests        Tinycast/Platform/PasteboardFiles.swift \
                            Tinycast/Features/Clipboard/Model/ColorFormat.swift \
                            Tinycast/Features/Clipboard/Model/ColorSpaces.swift \
                            Tinycast/Features/Clipboard/Service/ClipboardManager.swift \
+                           Tinycast/Features/Clipboard/Service/ClipboardPNGRunner.swift \
+                           Tinycast/Features/Clipboard/Service/ClipboardTextWorker.swift \
+                           Tinycast/Platform/ProcessExit.swift \
                            Tinycast/Features/Clipboard/Service/Paster.swift
 run index ClipboardFilePerformanceTests \
                            Tinycast/Platform/PasteboardFiles.swift \
@@ -238,7 +245,10 @@ run index ClipboardFilePerformanceTests \
                            Tinycast/Features/Clipboard/Model/ColorValue.swift \
                            Tinycast/Features/Clipboard/Model/ColorFormat.swift \
                            Tinycast/Features/Clipboard/Model/ColorSpaces.swift \
-                           Tinycast/Features/Clipboard/Service/ClipboardManager.swift
+                           Tinycast/Features/Clipboard/Service/ClipboardManager.swift \
+                           Tinycast/Features/Clipboard/Service/ClipboardPNGRunner.swift \
+                           Tinycast/Features/Clipboard/Service/ClipboardTextWorker.swift \
+                           Tinycast/Platform/ProcessExit.swift
 run index ClipboardThumbnailPerformanceTests \
                            Tinycast/Platform/ProcessExit.swift \
                            Tinycast/Platform/Images/ImageThumbnail.swift \

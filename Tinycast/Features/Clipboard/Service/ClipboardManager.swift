@@ -181,7 +181,8 @@ final class ClipboardManager {
                 let png =
                     isPNG
                     ? data
-                    : NSBitmapImageRep(data: data)?.representation(using: .png, properties: [:])
+                    : await ClipboardPNGRunner.png(fromTIFF: data)
+                        ?? NSBitmapImageRep(data: data)?.representation(using: .png, properties: [:])
                 guard let png else { return }
                 await store.addImage(png, sourceBundleID: sourceBundleID, capture: capture)
             }

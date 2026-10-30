@@ -121,7 +121,12 @@ A database that won't open is deleted and recreated (worst case the store degrad
 in-memory history).
 
 Image capture (TIFF→PNG re-encode + blob write) runs off the main actor via detached tasks; row
-inserts, original-text search, and pruning stay on the main actor.
+inserts, original-text search, and pruning stay on the main actor. **A copied TIFF is re-encoded in
+`ClipboardTextHelper`, not the app.** `ClipboardPNGRunner` writes the pasteboard's bytes to a
+temporary file, runs the helper's `png` mode with a 30 s deadline and reads the result back mapped.
+In the app, a 5120 × 2880 TIFF peaked 80 MB above its own 56 MB and left 24 MB behind; through the
+helper both are zero, for about 50 ms more. A failed or timed-out helper falls back to encoding in
+the app, as before. A PNG on the pasteboard is stored as it is and never decoded.
 Image copy uses Foundation’s `mappedIfSafe` hint before publishing the original PNG, its file URL
 and marker. The file URL is what a terminal pastes, as the path, since it ignores image data; there
 is deliberately no `.string`, which a rich text field would take over the image.

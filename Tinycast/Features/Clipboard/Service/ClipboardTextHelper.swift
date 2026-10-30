@@ -8,6 +8,9 @@ nonisolated enum ClipboardTextHelper {
         if CommandLine.arguments.count == 5, CommandLine.arguments[1] == "thumbnail" {
             exit(writeThumbnail() ? 0 : 1)
         }
+        if CommandLine.arguments.count == 4, CommandLine.arguments[1] == "png" {
+            exit(writePNG() ? 0 : 1)
+        }
         guard CommandLine.arguments.count == 3,
             ["image", "pdf"].contains(CommandLine.arguments[1])
         else { exit(2) }
@@ -48,5 +51,19 @@ nonisolated enum ClipboardTextHelper {
         values.isExcludedFromBackup = true
         try? folder.setResourceValues(values)
         return (try? (data as Data).write(to: copy, options: .atomic)) != nil
+    }
+
+    /// `png <source> <destination>`: a full-size re-encode's memory leaves with this process.
+    private static func writePNG() -> Bool {
+        let source = URL(fileURLWithPath: CommandLine.arguments[2])
+        let destination = URL(fileURLWithPath: CommandLine.arguments[3])
+        let data = NSMutableData()
+        guard let image = CGImageSourceCreateWithURL(source as CFURL, nil),
+            let output = CGImageDestinationCreateWithData(
+                data, UTType.png.identifier as CFString, 1, nil)
+        else { return false }
+        CGImageDestinationAddImageFromSource(output, image, 0, nil)
+        guard CGImageDestinationFinalize(output) else { return false }
+        return (try? (data as Data).write(to: destination, options: .atomic)) != nil
     }
 }

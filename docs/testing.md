@@ -129,6 +129,7 @@ If a change touches anything in the right column, the harness on the left is man
 | `CalendarTests` | all of `Calendar/Model/` plus `EventEditorSession` — links, join window, day buckets, draft and form focus |
 | `ClipboardSearchTests` | Ordinary and OCR result ordering, opt-in lifecycle, cancellation, pins and type filters |
 | `ClipboardTextTests` | Apple Vision/PDF extraction, scheduling, retry backoff and recovery |
+| `ClipboardPNGTests` | `Clipboard/Service/ClipboardPNGRunner.swift` — a TIFF comes back as a PNG of the same size, a failing, missing or stuck helper yields nothing, and no temporary file is left; `sips` plays the helper |
 | `PasteSequenceTests` | `Clipboard/Model/PasteSequence.swift` — the walk's order, its end, and what starts it over |
 | `ClipboardTests` | `Clipboard/Model/ClipboardStore.swift`, `ClipboardFilter.swift`, `ClipboardFileKind.swift`, the colour trio |
 | `ClipboardCoordinatorTests` | Edit Entry selection across query/type changes and pins, failed writes, deletion during editing and cancellation; isolated database and recorded clipboard effects |
@@ -327,7 +328,8 @@ per build with identical `-O` settings:
 ```sh
 swiftc -O -swift-version 6 Tinycast/Platform/PasteboardFiles.swift \
     Tinycast/Features/Clipboard/Model/{ClipboardStore,ClipboardFilter,ClipboardFileKind,ColorValue,ColorFormat,ColorSpaces}.swift \
-    Tinycast/Features/Clipboard/Service/ClipboardManager.swift \
+    Tinycast/Platform/{ProcessExit,Images/ImageDerivative}.swift \
+    Tinycast/Features/Clipboard/Service/{ClipboardManager,ClipboardPNGRunner,ClipboardTextWorker}.swift \
     Tests/ClipboardFilePerformanceTests.swift -o /tmp/ClipboardFilePerformanceTests
 /tmp/ClipboardFilePerformanceTests
 ```
