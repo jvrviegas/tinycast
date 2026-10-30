@@ -501,21 +501,13 @@ struct LauncherScreen: PaletteScreen {
         scrollToFollow()
     }
 
-    /// `LauncherList`'s section order; kinds past the matches arrive grouped, so a run is a section.
     func jumpSection(_ delta: Int, from selection: Int) -> Int? {
-        var counts = [pinnedFavorites.count, meetingCount, suggestionCount, matchCount]
-        var kind: AppEntry.Kind?
-        for entry in results.dropFirst(meetingCount + suggestionCount + matchCount) {
-            if entry.kind == kind {
-                counts[counts.count - 1] += 1
-            } else {
-                counts.append(1)
-                kind = entry.kind
-            }
-        }
-        counts += [files.count, fallbacks.count]
-        return PaletteRowIndex(hasCalculator: leadCard != nil, sectionCounts: counts)
-            .sectionJump(delta, from: selection)
+        let sections = LauncherSections(
+            hasCard: leadCard != nil, favorites: pinnedFavorites.count, meetings: meetingCount,
+            suggestions: suggestionCount, matches: matchCount,
+            rest: results.dropFirst(meetingCount + suggestionCount + matchCount).map(\.kind),
+            files: files.count, fallbacks: fallbacks.count)
+        return PaletteRowIndex(sectionCounts: sections.counts).sectionJump(delta, from: selection)
     }
 
     /// The sample `openActions` takes; only an app row can ever carry the running-only actions.
