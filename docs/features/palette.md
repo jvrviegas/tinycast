@@ -125,8 +125,11 @@ becomes the step back; a hidden one is being _summoned_, so the new screen is a 
 behind it. Every mode command and every global hotkey funnels through `showPalette`, which calls it —
 so typing "Clipboard History" at the root and pressing ↵ leaves a step back to the search that found
 it, while the Clipboard History hotkey does not. **The launcher is the exception, because it is the
-root** — ⌘Space over an open clipboard opens the root search with nothing behind it, rather than
-stacking the launcher over the screen it replaced. Nothing per-feature encodes this.
+root** — a link that types into the launcher over an open clipboard opens the root search with
+nothing behind it, rather than stacking the launcher over the screen it replaced. Nothing
+per-feature encodes this. The palette hotkey never reaches that rule while the palette is up:
+`togglePalette()` closes it from any screen, Quick AI included, because the hotkey is an open/close
+switch rather than a way home, and Pop to Root Search alone decides where the next summon lands.
 
 `PaletteState` holds the screens below `mode` as `[PaletteFrame]` — mode, query and selection, enough
 that returning looks like never having left — and offers four motions over it:

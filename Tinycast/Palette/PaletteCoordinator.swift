@@ -54,8 +54,9 @@ final class PaletteCoordinator {
         windowController.isVisible && palette.mode == mode
     }
 
+    /// Closes from any screen: the palette hotkey is an open/close switch, never a way home.
     func togglePalette() {
-        if isShowing(.launcher) {
+        if isVisible {
             hidePalette()
         } else {
             showPalette(mode: .launcher, restoreAnyMode: true)

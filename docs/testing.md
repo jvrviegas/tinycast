@@ -435,8 +435,9 @@ caches, TCC grants and login item, so this cannot disturb an installed copy.
 
 ### Core
 
-- Palette hotkey opens the launcher; pressing it again closes it; Escape clears a non-empty query,
-  then hides on a second press; clicking away closes it
+- Palette hotkey opens the launcher; pressing it again closes it from any screen, Quick AI
+  included, rather than returning to the launcher; Escape clears a non-empty query, then hides on
+  a second press; clicking away closes it
 - Search a mode command (Clipboard History, Search Emoji, Search Quicklinks, Search Files, Quick AI)
   and run it: Escape returns to the launcher **with the query still typed and the row still
   selected**, and the next press clears it. The same screen from its own global hotkey hides the
