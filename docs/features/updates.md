@@ -2,7 +2,9 @@
 
 By default, Tinycast checks GitHub Releases once a day and offers the newest release for its own
 channel in a pill in the palette, then installs it at the next relaunch or quit. There is no Sparkle
-and no appcast: the release feed the website already reads is the feed the app reads.
+and no appcast: the app reads this fork's own GitHub Releases (`ReleaseFeed.repository`), never
+upstream's. Upstream's releases carry the key in `TinycastUpdatePublicKey`, which this build still
+trusts, so pointing the feed back at upstream would let an upstream release replace the fork.
 
 ## Invariants
 
